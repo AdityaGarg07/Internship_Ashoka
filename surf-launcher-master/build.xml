@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="surf" default="release" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+
+	<description>
+        Surf Standalone application build script
+    </description>
+    <property name="lib.dir" location="./lib" />
+    <property name="target.dir" location="./target" />
+    <property name="surf.target.dir" location="../surf/target" /> <!-- this is where the surf.war files are stored -->
+    <property environment="env" />
+
+    <target name="standalone-jar">
+         <!-- target for quick building -->
+         <!-- this targets updates the standalone jar for both discovery and full. -->
+
+         <!-- first, add the stuff the launcher needs, like icons etc. (stored in lib.dir) -->
+         <jar destfile="${target.dir}/surf-standalone-jar-with-dependencies.jar" update="true" basedir="${lib.dir}" includes="index.html,log4j.properties,splash-image.png,muse-icon.png,edu/stanford/ejalbert/launching/windows/windowsConfig.properties"/>
+
+          <!-- add crossdomain.xml only to full surf-standalone, not to discovery -->
+          <jar destfile="${target.dir}/surf-standalone-jar-with-dependencies.jar" update="true" basedir="${lib.dir}" includes="crossdomain.xml"/>
+
+          <!-- copy the surf.war file for both discovery and full into the respective standalone jars. the files have to be named as surf.war, so copy into java.io.tmpdir first -->
+          <copy overwrite="true" file="${surf.target.dir}/surf.war" tofile="${java.io.tmpdir}/surf.war"/>
+          <jar update="true" basedir="${java.io.tmpdir}" destfile="${target.dir}/surf-standalone-jar-with-dependencies.jar" includes="surf.war"/>
+
+          <!-- rename the files and move them to the current dir -->
+          <move file="${target.dir}/surf-standalone-jar-with-dependencies.jar" tofile="surf-standalone.jar"/>
+    </target>
+
+	<target name="exe">
+		<condition property="launch4j.dir" value="launch4j-3.3-macos10.7">
+		    <matches string="${os.version}" pattern="^10.[234567]." />
+		</condition>
+        <condition property="launch4j.dir" value="launch4j-3.12-macos">
+            <matches string="${os.version}" pattern="^(10.12|10.13|10.14|10.15|10.16)" />
+        </condition>
+
+		<condition property="launch4j.dir" value="launch4j-3.8-win32">
+		    <os family="windows"/>
+		</condition>
+		<condition property="launch4j.dir" value="launch4j-3.8-linux">
+		    <os family="unix"/>
+		</condition>
+		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
+		<launch4j configFile="${launch4j.dir}/surf.xml" />
+	</target>
+
+	<target name="exe-discovery">
+		<condition property="launch4j.dir" value="launch4j-3.3-macos10.7">
+		    <matches string="${os.version}" pattern="^10.[234567]." />
+		</condition>
+		<condition property="launch4j.dir" value="launch4j-macos10.8">
+		    <matches string="${os.version}" pattern="^(10.8|10.9|10.10|10.11|10.12|10.13|10.14)." />
+		</condition>
+		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
+		<launch4j configFile="${launch4j.dir}/surf-discovery.xml" />
+	</target>
+
+
+<taskdef name="bundleapp"
+	 classname="com.oracle.appbundler.AppBundlerTask"
+         classpath="${lib.dir}/appbundler-1.0.jar" /> 
+
+<target name="macapp">
+    <mkdir dir="dist/surf" /> <!-- dist/surf because the vol. name on the dmg needs to be surf and not dist. -->
+    <bundleapp outputdirectory="dist/surf"
+        name="surf"
+        displayname="surf"
+        identifier="components.surf"
+	icon="lib/surf.icns"
+        mainclassname="in.edu.ashoka.surf.launcher.TomcatMain">
+	<runtime dir="${env.JAVA_HOME}" />
+        <classpath file="surf-standalone.jar" />
+	<option value="-Xmx4g"/>
+	<option value="-splash:surf-standalone.jar:splash-image.png"/>
+   </bundleapp>
+  <exec executable="hdiutil">
+        <arg value="create"/>
+        <arg value="surf.dmg"/>
+        <arg value="-srcfolder"/>
+        <arg value="./dist/surf"/>
+        <arg value="-ov"/>
+  </exec>
+</target>
+
+<target name="release" depends="macapp,exe"></target>
+
+</project>
