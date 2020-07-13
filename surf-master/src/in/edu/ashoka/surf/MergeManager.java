@@ -171,6 +171,18 @@ public class MergeManager {
 
                 break;
                 
+            case "reviewalgo":
+            	int accuracyx = 90;
+                try {
+                    accuracyx = Integer.parseInt(params.get("review-algo"));
+                } catch (NumberFormatException e) {
+                    Util.print_exception(e, log);
+                }
+//                algorithm = new EditDistanceMergeAlgorithm(d, "_st_" + Config.MERGE_FIELD, 5, filter); // run e.d. on the _st_ version of the field
+                  System.out.println("---------------------------------------------------------" + accuracyx + "-------------------------------------------------------------------------");
+                  algorithm = new ReviewAlgo(d.getTBRDataset(), "_st_" + Config.MERGE_FIELD, accuracyx, filter);
+                break;
+                
             case "cosinesimilarity":
             	int accuracy = 90;
                 try {

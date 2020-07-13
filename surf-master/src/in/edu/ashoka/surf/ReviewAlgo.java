@@ -9,13 +9,13 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import java.io.IOException;
 
-public class CosineSimilarityAlgo extends MergeAlgorithm {
+public class ReviewAlgo extends MergeAlgorithm {
 
     private final int inputval;
     private final String fieldName; // FieldName on which to Cosine Similarity
     private final Filter filter;
 
-    CosineSimilarityAlgo(Dataset dataset, String fieldName, int inputval, Filter filter) {
+    ReviewAlgo(Dataset dataset, String fieldName, int inputval, Filter filter) {
         super (dataset);
         this.filter = filter;
         this.fieldName = fieldName;
@@ -26,13 +26,17 @@ public class CosineSimilarityAlgo extends MergeAlgorithm {
     public List<Collection<Row>> run() {
 		Collection<Row> filteredRows = filter.isEmpty() ? dataset.getRows() : dataset.getRows().stream().filter(filter::passes).collect(toList());
 
+
 		SetMultimap<String, Row> fieldValueToRows = HashMultimap.create();
 		filteredRows.forEach(r -> fieldValueToRows.put(r.get(fieldName), r));
 
-//		filteredRows.forEach(r -> System.out.println(r.get(fieldName)));
+		System.out.println("------------------------------------------------------------------------------------");
+		System.out.println(filteredRows.size());
+		filteredRows.forEach(r -> System.out.println(r.toString()));
 		double acc = inputval/100.0;
 
-//		System.out.println("--------------------------------------------------------------------" + acc);
+		System.out.println("------------------------------------------------------------------------------------");
+		
 		CosineFunc func = new CosineFunc();
 
 		List<Set<String>> clusters;
@@ -45,7 +49,7 @@ public class CosineSimilarityAlgo extends MergeAlgorithm {
         Timers.cosineTimer.stop();
 
         System.out.println("--------------------------------------------------------The Time Taken is---------------------------------------------------------------");
-        Timers.log.info ("Time for cosine similarity computation: " + Timers.cosineTimer.toString());
+        Timers.log.info ("Time for Review Algo: " + Timers.cosineTimer.toString());
 		
 		int key = 0;
 		classes = new ArrayList<>();

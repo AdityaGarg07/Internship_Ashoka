@@ -201,11 +201,13 @@ public class Dataset implements Serializable, Cloneable {
         // read the names from CSV
         Iterable<CSVRecord> records = CSVParser.parse(new File(filename), Charset.forName("UTF-8"), CSVFormat.EXCEL.withHeader());
         for (CSVRecord record : records) {
+        	
             nRows++;
             Map<String, String> map = record.toMap();
 
             if (nRows == 1) {
                 for (String col : map.keySet()) {
+//                	System.out.println(col);
                 	columnsToSave.add(col);
                     registerColumn(col);
                 }

@@ -11,6 +11,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import in.edu.ashoka.surf.Dataset;
 import in.edu.ashoka.surf.Row;
 
@@ -144,12 +146,12 @@ public class CosineFunc {
 
 	public List<Set<String>> assign_similarity(Collection<Row> filteredRows, String fieldName,double val) {
 
-		HashMap<String, List<String>> map = new HashMap<>();
+//		HashMap<String, List<String>> map = new HashMap<>();
 		ArrayList<String> names = new ArrayList<>();
 		List<Set<String>> resultx = new ArrayList<Set<String>>();
 		filteredRows.forEach(r -> names.add(r.get(fieldName)));
-		filteredRows.forEach(r -> map.put(r.get(fieldName), new ArrayList<>()));
-		ArrayList<Node> similar = new ArrayList<>();
+//		filteredRows.forEach(r -> map.put(r.get(fieldName), new ArrayList<>()));
+//		ArrayList<Node> similar = new ArrayList<>();
 		boolean visited[] = new boolean[names.size()];
 
 //		System.out.println("Map = " + map);
@@ -157,7 +159,11 @@ public class CosineFunc {
 //		for (int i = 0; i < names.size(); i++) {
 //			System.out.println(i + " " + names.get(i));
 //		}
-
+		ArrayList<obj> aa = new ArrayList<>();
+		for (int i = 0; i < names.size(); i++) {
+			aa.add(word2vec(names.get(i)));
+		}
+		
 		for (int i = 0; i < names.size(); i++) {
 			String one = names.get(i);
 			int task = 0;
@@ -168,14 +174,17 @@ public class CosineFunc {
 				visited[i] = true;
 				curr.add(one);
 			}
+//			obj v1 = word2vec(one);
 			for (int j = i + 1; j < names.size(); j++) {
 				String two = names.get(j);
-				Node nn = new Node(one, two, cosine_similarity(word2vec(one), word2vec(two)), i);
-				similar.add(nn);
+//				obj v2 = word2vec(two);
+				double cosine_val = cosine_similarity(aa.get(i),aa.get(j));
+//				Node nn = new Node(one, two, cosine_similarity(word2vec(one), word2vec(two)), i);
+//				similar.add(nn);
 
 				if (task == 1) {
 //					System.out.println("hello");
-					if (nn.cosinesimilarity >= val && visited[j] == false) {
+					if (cosine_val >= val && visited[j] == false) {
 //						System.out.println("adi");
 						curr.add(two);
 						visited[j] = true;
@@ -186,7 +195,7 @@ public class CosineFunc {
 				resultx.add(curr);
 			}
 		}
-		int l = 0;
+//		int l = 0;
 		
 		return resultx;
 				

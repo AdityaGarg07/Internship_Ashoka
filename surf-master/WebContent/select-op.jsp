@@ -40,6 +40,7 @@
 		<select class="form-control selectpicker" id="algorithm" name="algorithm">
             <option value="editDistance">Edit distance</option>
             <option value="cosinesimilarity">Cosine Similarity</option>
+            <option value="reviewalgo">Review Algorithm</option>
 			<option value="compatibleNames">Compatible names</option>
             <option value="streaks">Streaks</option>
             <option value="allNames">All IDs in a single cluster</option>
@@ -50,6 +51,12 @@
             <label for="edit-distance">Maximum edit distance</label>
             <input type="text" class="form-control" id="edit-distance" name="edit-distance" placeholder="<%=Config.DEFAULT_EDIT_DISTANCE%>">
             <span id="edit-distance-0-help" class="help">Edit distance 0 not included</span>
+        </div>
+        
+        <div style="display:none" class="div-review-algo">
+            <label for="review-algo">Maximum edit distance</label>
+            <input type="text" class="form-control" id="review-algo" name="review-algo" placeholder="<%=Config.DEFAULT_EDIT_DISTANCE%>">
+            <span id="review-algo-0-help" class="help">Testing </span>
         </div>
         
         
@@ -228,6 +235,12 @@
             $('.div-cosine-similarity').show();
         } else {
             $('.div-cosine-similarity').hide();
+        }
+        
+        if (alg === 'reviewalgo') {
+            $('.div-review-algo').show();
+        } else {
+            $('.div-review-algo').hide();
         }
         
     }

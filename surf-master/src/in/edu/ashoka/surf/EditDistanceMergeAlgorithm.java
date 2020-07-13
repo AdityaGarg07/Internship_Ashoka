@@ -40,8 +40,8 @@ public class EditDistanceMergeAlgorithm extends MergeAlgorithm {
         SetMultimap<String, Row> fieldValueToRows = HashMultimap.create();
         filteredRows.forEach (r -> fieldValueToRows.put (r.get(fieldName), r));
         
-        System.out.println("--------------------------------------------------------------------");
-		filteredRows.forEach(r -> System.out.println(r.get(fieldName)));
+//        System.out.println("--------------------------------------------------------------------");
+//		filteredRows.forEach(r -> System.out.println(r.get(fieldName)));
 
         // do the clustering based on ed (but only if ed > 0)
         Timers.editDistanceTimer.reset();
@@ -73,7 +73,7 @@ public class EditDistanceMergeAlgorithm extends MergeAlgorithm {
         // compute the result of this algorithm
         classes = new ArrayList<>();
         for (Set<String> cluster : clusters) {
-        	System.out.println(cluster);
+//        	System.out.println(cluster);
             final Collection<Row> rowsForThisCluster = new ArrayList<>();
             // cluster just has strings, convert each string in the cluster to its rows, and add it to rowsForThisCluster
             cluster.forEach (s -> { rowsForThisCluster.addAll (fieldValueToRows.get(s)); });
