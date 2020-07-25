@@ -11,62 +11,66 @@ import java.io.IOException;
 
 public class ReviewAlgo extends MergeAlgorithm {
 
-    private final int inputval;
-    private final String fieldName; // FieldName on which to Cosine Similarity
+    private final String fieldName; //This Review Algorithm adds data to TBRfile System
     private final Filter filter;
 
-    ReviewAlgo(Dataset dataset, String fieldName, int inputval, Filter filter) {
+    ReviewAlgo(Dataset dataset, String fieldName, Filter filter) {
         super (dataset);
         this.filter = filter;
         this.fieldName = fieldName;
-        this.inputval = inputval;
     }
 
     @Override
     public List<Collection<Row>> run() {
 		Collection<Row> filteredRows = filter.isEmpty() ? dataset.getRows() : dataset.getRows().stream().filter(filter::passes).collect(toList());
 
-
 		SetMultimap<String, Row> fieldValueToRows = HashMultimap.create();
 		filteredRows.forEach(r -> fieldValueToRows.put(r.get(fieldName), r));
 
-		System.out.println("------------------------------------------------------------------------------------");
-		System.out.println(filteredRows.size());
-		filteredRows.forEach(r -> System.out.println(r.toString()));
-		double acc = inputval/100.0;
+//		System.out.println("------------------------------------------------------------------------------------");
+//		System.out.println(filteredRows.size());
+//		filteredRows.forEach(r -> System.out.println(r.alldata()));
+//		filteredRows.forEach(r -> System.out.println(r.get(fieldName)));
+//		System.out.println("------------------------------------------------------------------------------------");
 
-		System.out.println("------------------------------------------------------------------------------------");
-		
-		CosineFunc func = new CosineFunc();
-
-		List<Set<String>> clusters;
+		List<Set<String>> clusters = new ArrayList<Set<String>>();
 		
         Timers.cosineTimer.reset();
         Timers.cosineTimer.start();
-
-		clusters = func.assign_similarity(filteredRows,fieldName,acc);
+        
+        ArrayList<String> namex = new ArrayList<>();
+        filteredRows.forEach(r -> namex.add(r.get(fieldName)));
+        
+        int task = 1;
+        Set<String> curr = null;
+        for (int i = 0; i < namex.size(); i++) {
+        	if(task == 1) {
+        		curr = new LinkedHashSet<String>();
+        	}
+			if(namex.get(i).length() != 0) {
+				curr.add(namex.get(i));
+				task = 0;
+			}
+			else {
+				task++;
+        		if(i!=0 && task == 1) {
+        			clusters.add(curr);
+        		}
+			}
+		}
 		
-        Timers.cosineTimer.stop();
-
-        System.out.println("--------------------------------------------------------The Time Taken is---------------------------------------------------------------");
-        Timers.log.info ("Time for Review Algo: " + Timers.cosineTimer.toString());
-		
-		int key = 0;
 		classes = new ArrayList<>();
 		for (Set<String> cluster : clusters) {
-//			System.out.println(key++ + " " + cluster);
 			final Collection<Row> rowsForThisCluster = new ArrayList<>();
-			// cluster just has strings, convert each string in the cluster to its rows, and
-			// add it to rowsForThisCluster
 			cluster.forEach(s -> {
 				rowsForThisCluster.addAll(fieldValueToRows.get(s));
 			});
 			classes.add(rowsForThisCluster);
 		}
-
-//		System.out.println("--------------------------------------------------------------------");
-
-//		classes.forEach(x -> System.out.println(x.toString()));
+        
+        
+        Timers.cosineTimer.stop();
+        Timers.log.info ("Time for Review Algo: " + Timers.cosineTimer.toString());
 
 		return classes;
 
@@ -79,6 +83,6 @@ public class ReviewAlgo extends MergeAlgorithm {
         }
     }
 
-    public String toString() { return "The cosine similarity algorithm works fine with inputval" + inputval; }
+    public String toString() { return "The Review Algo Works Fine";}
     
 }

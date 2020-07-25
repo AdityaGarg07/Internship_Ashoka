@@ -16,6 +16,7 @@ public class Timers {
     public static final StopWatch unionFindTimer = new StopWatch();
     public static final StopWatch cosineTimer = new StopWatch();
     public static final StopWatch CompatibleNameTimer = new StopWatch();
+    public static final StopWatch ReviewTimer = new StopWatch();
 
     public static void print() {
         log.info ("Canonicalization: " + canonTimer);

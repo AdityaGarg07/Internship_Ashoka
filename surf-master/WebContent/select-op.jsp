@@ -54,9 +54,6 @@
         </div>
         
         <div style="display:none" class="div-review-algo">
-            <label for="review-algo">Maximum edit distance</label>
-            <input type="text" class="form-control" id="review-algo" name="review-algo" placeholder="<%=Config.DEFAULT_EDIT_DISTANCE%>">
-            <span id="review-algo-0-help" class="help">Testing </span>
         </div>
         
         
